@@ -1,0 +1,34 @@
+<style>
+    .cropArea{
+        background: #E4E4E4;
+        overflow: hidden;
+        width: 400px;
+        height: 400px;
+    }
+    .croppedImageHere{
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        border-bottom: red;
+        background-size: cover;
+    }
+</style>
+
+<input type="file" id="fileInput" />
+
+<div class="croppedImageHere" ng-style="{'background-image':'url('+profileImage+')'}">
+
+</div>
+
+<!--<button ng-click="clickToOpen()"></button>-->
+<script type="text/ng-template" id="templateId">
+   <div class="cropArea">
+       <ui-cropper image="cropping.myImage" area-type="rectangle" chargement="'Loading'" result-image="cropping.myCroppedImagenew" aspect-ratio="1.2" style="text-align: center"></ui-cropper>
+   </div>
+
+   <button ng-click="rotate(false)">Rotate Left</button>
+   <button ng-click="saveImage()">save</button>
+
+    <button ng-click="rotate(true)">Rotate Right</button>
+</script>
+
