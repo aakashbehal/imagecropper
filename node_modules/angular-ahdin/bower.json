@@ -1,0 +1,25 @@
+{
+  "name": "angular-ahdin",
+  "homepage": "https://github.com/fastmonkeys/angular-ahdin",
+  "authors": [
+    "Roope Hovi <roope.hovi@gmail.com>"
+  ],
+  "description": "Image file compression service for AngularJS applications",
+  "main": "dist/angular-ahdin.js",
+  "moduleType": [
+    "globals"
+  ],
+  "license": "MIT",
+  "private": false,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test"
+  ],
+  "dependencies": {
+    "angular": "^1.2.0",
+    "blob-util": "^1.0.0",
+    "blueimp-load-image": ">=1.13.0 <3.0.0"
+  }
+}
