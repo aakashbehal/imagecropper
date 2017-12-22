@@ -100,36 +100,65 @@ angular.module('myApp.view1', ['ngRoute'])
   var handleFileSelect=function(evt) {
     var file=evt.currentTarget.files[0];
     console.log(file.size);
-    Ahdin.compress({
-      sourceFile: file,
-      quality: 0.5
-    }).then(function(compressedBlob) {
-      console.log(compressedBlob.size);
-      var reader = new FileReader();
-      reader.onload = function (compressedBlob) {
-        $scope.$apply(function($scope){
-          // console.log(compressedBlob.target.result)
-          $scope.cropping.myImage=compressedBlob.target.result;
-          getOrientation(file, function(orientation) {
-            $scope.ImageOrientation = orientation;
-            console.log('orientation: ' + orientation, orientation == 6);
-            if(orientation == 6){
-              // $timeout(function () {
-                $scope.rotate(true);
-              // } ,3000)
-            }else if(orientation == 8){
-              // $timeout(function () {
-                $scope.rotate(false);
-              // } ,3000)
-            }
-          });
-        });
-      };
-
-      reader.readAsDataURL(file);
-      $scope.clickToOpen()
-    });
-
+    // Ahdin.compress({
+    //   sourceFile: file,
+    //   quality: 0.5
+    // }).then(function(compressedBlob) {
+    //   console.log(compressedBlob.size);
+    //   var reader = new FileReader();
+    //   reader.onload = function (compressedBlob) {
+    //     $scope.$apply(function($scope){
+    //       // console.log(compressedBlob.target.result)
+    //       $scope.cropping.myImage=compressedBlob.target.result;
+    //       getOrientation(file, function(orientation) {
+    //         $scope.ImageOrientation = orientation;
+    //         console.log('orientation: ' + orientation, orientation == 6);
+    //         if(orientation == 6){
+    //           // $timeout(function () {
+    //             $scope.rotate(true);
+    //           // } ,3000)
+    //         }else if(orientation == 8){
+    //           // $timeout(function () {
+    //             $scope.rotate(false);
+    //           // } ,3000)
+    //         }
+    //       });
+    //     });
+    //   };
+    //
+    //   reader.readAsDataURL(file);
+    //   $scope.clickToOpen()
+    // });
+    new ImageCompressor(file, {
+      width: undefined,
+      height: undefined,
+      quality: 0.7,
+      success: function (compressedBlob) {
+          var reader = new FileReader();
+          reader.onload = function (compressedBlob) {
+            $scope.$apply(function($scope){
+              // console.log(compressedBlob.target.result)
+              $scope.cropping.myImage=compressedBlob.target.result;
+              getOrientation(file, function(orientation) {
+                $scope.ImageOrientation = orientation;
+                console.log('orientation: ' + orientation, orientation == 6);
+                if(orientation == 6){
+                  // $timeout(function () {
+                    $scope.rotate(true);
+                  // } ,3000)
+                }else if(orientation == 8){
+                  // $timeout(function () {
+                    $scope.rotate(false);
+                  // } ,3000)
+                }
+              });
+            });
+          };
+          reader.readAsDataURL(file);
+          $scope.clickToOpen()
+      },
+      error: null
+    })
   };
   angular.element(document.querySelector('#fileInput')).on('change',handleFileSelect);
 
