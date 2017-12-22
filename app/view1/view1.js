@@ -130,9 +130,9 @@ angular.module('myApp.view1', ['ngRoute'])
     //   $scope.clickToOpen()
     // });
     new ImageCompressor(file, {
-      width: undefined,
-      height: undefined,
-      quality: 0.7,
+      width: 1000,
+      height: 1000,
+      quality: 0.6,
       success: function (compressedBlob) {
           var reader = new FileReader();
           reader.onload = function (compressedBlob) {
