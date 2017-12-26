@@ -22,11 +22,15 @@ angular.module('myApp.view1', ['ngRoute'])
   $scope.aspectRatio = 2
 
 
+  $scope.$watch('imageRotated', function(){
+    console.log('value change', $scope.imageRotated)
+  })
+
 
   $scope.isRotating = false;
   $scope.rotate = function(isClockwise) {
     console.log('called')
-    $scope.imageRotated = true;
+    // $scope.imageRotated = true;
     // console.log($scope.myImage)
     if (!$scope.cropping.myImage) return;
     $scope.isRotating = true;
@@ -44,10 +48,24 @@ angular.module('myApp.view1', ['ngRoute'])
     var image = new Image();
     image.onload = function() {
       var canvas = document.createElement('canvas');
-      canvas.width = image.height;
-      canvas.height = image.width;
+      var deg = '';
+      console.log($scope.imageRotated)
+      if(($scope.ImageOrientation == 6) && ($scope.imageRotated == false)){
+        deg = isClockwise ? Math.PI : 0;
+        canvas.width = image.width;
+        canvas.height = image.height;
+      }else if(($scope.ImageOrientation == 8) && ($scope.imageRotated == false)){
+        deg = isClockwise ? 0 : -Math.PI;
+        canvas.width = image.width;
+        canvas.height = image.height;
+      }else {
+        var deg = isClockwise ? Math.PI / 2 : Math.PI / -2;
+        canvas.width = image.height;
+        canvas.height = image.width;
+      }
+      console.log("1========?>>>", deg, $scope.ImageOrientation)
       var ctx = canvas.getContext("2d");
-      var deg = isClockwise ? Math.PI / 2 : Math.PI / -2;
+      
       // translate to center-canvas
       // the origin [0,0] is now center-canvas
       ctx.translate(canvas.width / 2, canvas.height / 2);
@@ -61,6 +79,8 @@ angular.module('myApp.view1', ['ngRoute'])
       // // un-translate the canvas back to origin==top-left canvas
       // ctx.translate(-canvas.width / 2, -canvas.height / 2);
       callback(canvas.toDataURL());
+    $scope.imageRotated = true
+      
     };
     //image.crossOrigin = "Anonymous";
     image.src = base64data;
@@ -70,6 +90,7 @@ angular.module('myApp.view1', ['ngRoute'])
 
 
   function getOrientation(file, callback) {
+    console.log(file)
     var reader = new FileReader();
     reader.onload = function(e) {
       var view = new DataView(e.target.result);
@@ -99,7 +120,13 @@ angular.module('myApp.view1', ['ngRoute'])
 
   var handleFileSelect=function(evt) {
     var file=evt.currentTarget.files[0];
+    var initialFile = file
     console.log(file.size);
+    if(file.size > 393216){
+      // $('.fileInput').value('')
+      alert('Image size');
+      return
+    }
     // Ahdin.compress({
     //   sourceFile: file,
     //   quality: 0.5
@@ -129,36 +156,37 @@ angular.module('myApp.view1', ['ngRoute'])
     //   reader.readAsDataURL(file);
     //   $scope.clickToOpen()
     // });
-    new ImageCompressor(file, {
-      width: 1000,
-      height: 1000,
-      quality: 0.6,
-      success: function (compressedBlob) {
+    // new ImageCompressor(file, {
+    //   width: 1000,
+    //   height: 1000,
+    //   quality: 0.6,
+    //   success: function (compressedBlob) {
           var reader = new FileReader();
-          reader.onload = function (compressedBlob) {
+          reader.onload = function (file) {
             $scope.$apply(function($scope){
               // console.log(compressedBlob.target.result)
-              $scope.cropping.myImage=compressedBlob.target.result;
-              getOrientation(file, function(orientation) {
+              $scope.cropping.myImage=file.target.result;
+              console.log('----->>>>',initialFile)
+              getOrientation(initialFile, function(orientation) {
                 $scope.ImageOrientation = orientation;
                 console.log('orientation: ' + orientation, orientation == 6);
-                if(orientation == 6){
-                  // $timeout(function () {
-                    $scope.rotate(true);
-                  // } ,3000)
-                }else if(orientation == 8){
-                  // $timeout(function () {
-                    $scope.rotate(false);
-                  // } ,3000)
-                }
+                // if(orientation == 6){
+                //   // $timeout(function () {
+                //     $scope.rotate(true);
+                //   // } ,3000)
+                // }else if(orientation == 8){
+                //   // $timeout(function () {
+                //     $scope.rotate(false);
+                //   // } ,3000)
+                // }
               });
             });
           };
           reader.readAsDataURL(file);
           $scope.clickToOpen()
-      },
-      error: null
-    })
+    //   },
+    //   error: null
+    // })
   };
   angular.element(document.querySelector('#fileInput')).on('change',handleFileSelect);
 
@@ -169,7 +197,13 @@ angular.module('myApp.view1', ['ngRoute'])
       scope: $scope,
       data:$scope.cropping.myImage,
       resizable: false,
+      closeByEscape:false,
+      closeByDocument:false,
       className: 'ngdialog-theme-default',
+      preCloseCallback: function(value) {
+        console.log('===== i work', value)
+         $scope.imageRotated = false
+      },
       controller: ['$scope',  function($scope) {
       }]});
   };
@@ -179,6 +213,7 @@ angular.module('myApp.view1', ['ngRoute'])
     console.log($scope.cropping.myCroppedImagenew)
     $scope.profileImage = $scope.cropping.myCroppedImagenew
     ngDialog.closeAll()
+    $scope.imageRotated == false
   }
 
 
