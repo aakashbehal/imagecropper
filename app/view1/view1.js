@@ -122,7 +122,7 @@ angular.module('myApp.view1', ['ngRoute'])
     var file=evt.currentTarget.files[0];
     var initialFile = file
     console.log(file.size);
-    if(file.size > 393216){
+    if(file.size > 5242880){
       // $('.fileInput').value('')
       alert('Image size');
       return
